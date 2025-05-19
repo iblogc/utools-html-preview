@@ -1,0 +1,65 @@
+# HTML Preview for uTools
+
+一个优雅的HTML代码预览插件，提供类似浏览器的预览体验。
+
+## 需求来源
+
+有些 AI 输出 Html 代码后不支持直接在线预览，之前的做法往往是复制 Html 到本地保存为一个 .html 文件，然后用浏览器打开此文件，很麻烦。使用此插件可以节省保存文件浏览器打开这些步骤。
+
+## ✨ 特性
+
+- 🎯 即时预览HTML代码
+- 💻 模拟浏览器界面
+- 🚀 支持JavaScript执行
+- 📱 响应式设计
+- 🎨 macOS风格界面
+- 🔍 自动识别HTML代码
+
+## 📥 安装说明
+
+### 从插件市场安装
+
+1. 打开uTools
+2. 进入插件市场
+3. 搜索"Html预览"
+4. 点击安装
+
+### 手动安装
+
+1. 下载插件包(.upx文件)
+2. 打开uTools
+3. 拖拽.upx文件到uTools窗口
+4. 点击安装
+
+## 🚀 使用方法
+
+1. 选中任意包含HTML标签的文本
+2. 呼出uTools
+3. 选择Html预览
+
+## 📝 代码示例
+
+```html
+<!-- 基础HTML -->
+<div>Hello World</div>
+
+<!-- 带样式的HTML -->
+<div style="color: blue;">
+  这是一段蓝色的文字
+</div>
+
+<!-- 带JavaScript的HTML -->
+<button onclick="alert('Hello!')">点击我</button>
+
+<!-- 完整的HTML文档 -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>测试页面</title>
+</head>
+<body>
+  <h1>这是标题</h1>
+  <p>这是内容</p>
+</body>
+</html>
+```
