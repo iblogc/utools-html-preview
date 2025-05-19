@@ -36,30 +36,3 @@
 1. 选中任意包含HTML标签的文本
 2. 呼出uTools
 3. 选择Html预览
-
-## 📝 代码示例
-
-```html
-<!-- 基础HTML -->
-<div>Hello World</div>
-
-<!-- 带样式的HTML -->
-<div style="color: blue;">
-  这是一段蓝色的文字
-</div>
-
-<!-- 带JavaScript的HTML -->
-<button onclick="alert('Hello!')">点击我</button>
-
-<!-- 完整的HTML文档 -->
-<!DOCTYPE html>
-<html>
-<head>
-  <title>测试页面</title>
-</head>
-<body>
-  <h1>这是标题</h1>
-  <p>这是内容</p>
-</body>
-</html>
-```
