@@ -340,7 +340,7 @@ onMounted(() => {
       </div>
     </div>
     <!-- 版权信息 -->
-    <div class="copyright">© 2024 HTML Preview. Made with ❤️ by 二进制跳杀</div>
+    <div class="copyright">© 2025 HTML Preview. Made with ❤️ by 二进制跳杀</div>
   </div>
 </template>
 
