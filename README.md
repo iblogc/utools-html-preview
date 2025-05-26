@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/Version-1.0.2-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 [![uTools](https://img.shields.io/badge/uTools-插件-green.svg)](https://u.tools/)
 
@@ -29,6 +29,7 @@
   <tr>
     <td>⚡️ 支持JavaScript</td>
     <td>🔍 智能识别</td>
+    <td>💾 保存为文件</td>
   </tr>
 </table>
 

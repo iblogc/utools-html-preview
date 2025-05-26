@@ -71,10 +71,41 @@ const exampleHTML = `<!DOCTYPE html>
 const copyExampleHTML = async () => {
   try {
     await navigator.clipboard.writeText(exampleHTML);
-    alert('示例HTML已复制到剪贴板!');
+    window.utools.showNotification('示例HTML已复制到剪贴板!');
   } catch (err) {
     console.error('复制失败: ', err);
-    alert('复制失败,请手动复制。');
+    window.utools.showNotification('复制失败,请手动复制。');
+  }
+};
+
+// 保存当前HTML为文件
+const saveAsHtmlFile = () => {
+  // 获取当前预览的HTML内容
+  const content = htmlContent.value || '';
+  
+  // 如果没有内容，提示后退出
+  if (!content || content === 'Html预览' || content === 'html预览') {
+    window.utools.showNotification('没有HTML内容可保存!');
+    return;
+  }
+
+  // 使用uTools API显示保存对话框
+  const filePath = window.utools.showSaveDialog({
+    title: '保存HTML文件',
+    defaultPath: `${pageTitle.value || 'untitled'}.html`,
+    filters: [{ name: 'HTML文件', extensions: ['html'] }]
+  });
+
+  // 用户选择了保存位置
+  if (filePath) {
+    // 调用preload中暴露的方法来保存文件
+    const result = window.services.saveFile(filePath, content);
+    if (result && result.success) {
+      window.utools.showNotification(`文件已成功保存到: ${result.path}`);
+    } else {
+      console.error('保存文件失败:', result ? result.error : '未知错误');
+      window.utools.showNotification(`保存文件失败: ${result ? result.error : '未能成功保存文件'}`);
+    }
   }
 };
 
@@ -156,12 +187,17 @@ const updatePreview = (content) => {
           font-size: 15px;
         }
         .step-text {
-          font-size: 16px;
-          color: #1d1d1f;
-          line-height: 1.4;
+            font-size: 16px;
+            color: #1d1d1f;
+            line-height: 1.4;
         }
-        .copy-button {
-          display: inline-block;
+        .buttons-container {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+          margin-top: 24px;
+        }
+        .button {
           padding: 10px 24px;
           background: rgba(0, 122, 255, 0.9);
           color: white;
@@ -171,19 +207,24 @@ const updatePreview = (content) => {
           font-weight: 500;
           cursor: pointer;
           transition: all 0.2s ease-in-out;
-          text-align: center;
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
+          display: flex;
+          align-items: center;
         }
-        .copy-button:hover {
+        .button:hover {
           background: rgba(0, 122, 255, 1);
           transform: translateY(-1px);
           box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
         }
-        .copy-button:active {
+        .button:active {
           transform: translateY(0);
           background: rgba(0, 122, 255, 0.8);
           box-shadow: 0 2px 6px rgba(0, 122, 255, 0.2);
+        }
+        .button-icon {
+          margin-right: 8px;
+          font-size: 16px;
         }
         .tip {
           margin-top: 20px;
@@ -213,17 +254,23 @@ const updatePreview = (content) => {
           </li>
           <li class="step">
             <div class="step-number">2</div>
-            <div class="step-text">呼出uTools（确保uTools主输入框里有HTML内容）</div>
+            <div class="step-text">呼出uTools（确保主输入框里有HTML内容）</div>
           </li>
           <li class="step">
             <div class="step-number">3</div>
-            <div class="step-text">选择Html预览</div>
+            <div class="step-text">选择Html预览插件</div>
           </li>
         </ul>
-        <button class="copy-button" onclick="parent.copyExampleHTML_BRIDGE()">一键复制示例HTML</button>
+        
+        <div class="buttons-container">
+          <button class="button" onclick="parent.copyExampleHTML_BRIDGE()">
+            <span class="button-icon">📋</span>复制示例HTML
+          </button>
+        </div>
+        
         <div class="tip">
           <span class="tip-icon">💡</span>
-          提示: 支持JavaScript执行和完整的HTML文档预览。
+          支持JavaScript执行和完整的HTML文档预览。
         </div>
       </div>
     `
@@ -264,9 +311,10 @@ const updatePreview = (content) => {
   // 等待iframe加载完成后获取title
   iframe.onload = () => {
     updateTitle()
-    // 将复制函数桥接到iframe的父级
+    // 将函数桥接到iframe的父级
     if(iframe.contentWindow) {
       iframe.contentWindow.parent.copyExampleHTML_BRIDGE = copyExampleHTML;
+      iframe.contentWindow.parent.saveAsHtmlFile_BRIDGE = saveAsHtmlFile;
     }
   }
 }
@@ -327,6 +375,15 @@ onMounted(() => {
         <div class="address-bar">
           <span class="secure-icon">🔒</span>
           <span class="url">preview.html</span>
+        </div>
+        <div class="browser-actions">
+          <span class="action-btn save" @click="saveAsHtmlFile" title="保存为HTML文件">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="17 21 17 13 7 13 7 21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="7 3 7 8 15 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
         </div>
       </div>
 
