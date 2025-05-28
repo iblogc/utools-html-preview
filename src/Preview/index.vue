@@ -191,8 +191,7 @@ const welcomeHTML = `
       }
       .tip {
         margin-top: 20px;
-        padding: 10px;
-        background: rgba(0, 0, 0, 0.03);
+        background: rgba(255, 247, 237, 0.9);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         border-radius: 14px;
@@ -200,12 +199,86 @@ const welcomeHTML = `
         font-size: 14px;
         line-height: 1.5;
         text-align: left;
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(234, 179, 8, 0.2);
+        overflow: hidden;
+      }
+      .tip-header {
+        background: rgba(234, 179, 8, 0.1);
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid rgba(234, 179, 8, 0.2);
       }
       .tip-icon {
         font-size: 18px;
-        margin-right: 8px;
-        vertical-align: middle;
+      }
+      .tip-title {
+        font-weight: 600;
+        color: #92400e;
+      }
+      .tip-content {
+        padding: 16px;
+      }
+      .tip-content p {
+        margin: 0 0 12px 0;
+      }
+      .tip-content p:last-child {
+        margin-bottom: 16px;
+      }
+      .tip-links {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .tip-link-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tip-link {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: rgba(234, 179, 8, 0.1);
+        border-radius: 8px;
+        color: #92400e;
+        font-size: 13px;
+        word-break: break-all;
+      }
+      .link-label {
+        white-space: nowrap;
+        color: #92400e;
+        font-weight: 500;
+      }
+      .link-url {
+        color: #92400e;
+        opacity: 0.8;
+      }
+      .copy-btn {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        border: 1px solid rgba(234, 179, 8, 0.3);
+        background: white;
+        border-radius: 6px;
+        color: #92400e;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .copy-btn:hover {
+        background: rgba(234, 179, 8, 0.1);
+        transform: translateY(-1px);
+      }
+      .copy-btn:active {
+        transform: translateY(0);
+      }
+      .copy-icon {
+        font-size: 14px;
       }
     </style>
   </head>
@@ -230,10 +303,54 @@ const welcomeHTML = `
       <div class="buttons-container">
         <button class="button" onclick="parent.copyExampleHTML_BRIDGE()"><span class="button-icon">📋</span>复制示例HTML</button>
       </div>
-
       <div class="tip">
-        <span class="tip-icon">💡</span>
-        支持JavaScript执行和完整的HTML文档预览。
+        <div class="tip-header">
+          <span class="tip-icon">⚠️</span>
+          <span class="tip-title">功能说明</span>
+        </div>
+        <div class="tip-content">
+          <div class="notice-section">
+            <h3 class="section-title">使用限制</h3>
+            <p>由于生产环境安全限制，当前版本不支持加载外部资源（css、js、图片等），这可能会影响某些HTML预览效果。</p>
+          </div>
+          
+          <div class="notice-section">
+            <h3 class="section-title">推荐替代方案</h3>
+            <p>
+              推荐使用
+              <span class="author-tag">
+                <span class="author-icon">👨‍💻</span>
+                <span class="author-name">@逆流而上</span>
+              </span>
+              开发的预览HTML脚本，支持完整的资源加载。
+            </p>
+          </div>
+
+          <div class="tip-links">
+            <div class="tip-link-item">
+              <div class="tip-link">
+                <span class="link-icon">🔗</span>
+                <span class="link-label">快捷命令：</span>
+                <span class="link-url">https://www.u-tools.cn/plugins/detail/快捷命令</span>
+              </div>
+              <button class="copy-btn" onclick="parent.copyToClipboard_BRIDGE('https://www.u-tools.cn/plugins/detail/快捷命令')">
+                <span class="copy-icon">📋</span>
+                <span>复制</span>
+              </button>
+            </div>
+            <div class="tip-link-item">
+              <div class="tip-link">
+                <span class="link-icon">🔗</span>
+                <span class="link-label">预览脚本：</span>
+                <span class="link-url">https://qc.qaz.ink/script/info/369</span>
+              </div>
+              <button class="copy-btn" onclick="parent.copyToClipboard_BRIDGE('https://qc.qaz.ink/script/info/369')">
+                <span class="copy-icon">📋</span>
+                <span>复制</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
@@ -318,7 +435,7 @@ const updatePreview = (content) => {
     // 将函数桥接到iframe的父级
     if (iframe.contentWindow) {
       iframe.contentWindow.parent.copyExampleHTML_BRIDGE = copyExampleHTML
-      iframe.contentWindow.parent.saveAsHtmlFile_BRIDGE = saveAsHtmlFile
+      iframe.contentWindow.parent.copyToClipboard_BRIDGE = copyToClipboard
     }
   }
 }
@@ -345,6 +462,16 @@ onMounted(() => {
     updatePreview('')
   }
 })
+
+const copyToClipboard = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    window.utools.showNotification('地址已复制到剪贴板!')
+  } catch (err) {
+    console.error('复制失败: ', err)
+    window.utools.showNotification('复制失败,请手动复制。')
+  }
+}
 </script>
 
 <template>
@@ -555,5 +682,82 @@ onMounted(() => {
   font-size: 12px;
   padding: 4px 0;
   user-select: none;
+}
+
+.tip {
+  margin-top: 20px;
+  background: rgba(255, 247, 237, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 14px;
+  color: #1d1d1f;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  overflow: hidden;
+}
+
+.tip-header {
+  background: rgba(234, 179, 8, 0.1);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+.tip-icon {
+  font-size: 18px;
+}
+
+.tip-title {
+  font-weight: 600;
+  color: #92400e;
+}
+
+.tip-content {
+  padding: 16px;
+}
+
+.notice-section {
+  margin-bottom: 20px;
+}
+
+.notice-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #92400e;
+  margin: 0 0 8px 0;
+}
+
+.tip-content p {
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+}
+
+.author-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 4px;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 2px;
+}
+
+.author-icon {
+  font-size: 14px;
+}
+
+.author-name {
+  letter-spacing: 0.5px;
 }
 </style>
