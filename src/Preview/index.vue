@@ -12,7 +12,7 @@ const htmlContent = ref('')
 const iframeRef = ref(null)
 const pageTitle = ref('')
 
-// 示例HTML代码 (占位)
+// 示例HTML代码
 const exampleHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,28 +65,201 @@ const exampleHTML = `<!DOCTYPE html>
   </div>
 </body>
 </html>
-`;
+`
+
+// 欢迎页
+const welcomeHTML = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>欢迎使用HTML预览插件</title>
+    <style id="custom-scrollbar-style">
+      /* macOS Scrollbar Style */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.5);
+      }
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background: linear-gradient(135deg, #f0f2f5, #e2e5ec);
+        color: #1d1d1f;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 40px);
+      }
+      .container {
+        max-width: 520px;
+        width: 100%;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 25px 32px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h2 {
+        margin: 0 0 32px;
+        color: #1d1d1f;
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+      }
+      .steps {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 8px 0;
+        text-align: left;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        padding: 5px 0;
+        margin-bottom: 8px;
+      }
+      .step:last-child {
+        margin-bottom: 0;
+      }
+      .step-number {
+        min-width: 32px;
+        height: 25px;
+        background: rgba(0, 122, 255, 0.1);
+        color: #007aff;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        margin-right: 16px;
+        font-size: 15px;
+      }
+      .step-text {
+        font-size: 16px;
+        color: #1d1d1f;
+        line-height: 1.4;
+      }
+      .buttons-container {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 24px;
+      }
+      .button {
+        padding: 10px 24px;
+        background: rgba(0, 122, 255, 0.9);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+      }
+      .button:hover {
+        background: rgba(0, 122, 255, 1);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+      }
+      .button:active {
+        transform: translateY(0);
+        background: rgba(0, 122, 255, 0.8);
+        box-shadow: 0 2px 6px rgba(0, 122, 255, 0.2);
+      }
+      .button-icon {
+        margin-right: 8px;
+        font-size: 16px;
+      }
+      .tip {
+        margin-top: 20px;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.03);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-radius: 14px;
+        color: #1d1d1f;
+        font-size: 14px;
+        line-height: 1.5;
+        text-align: left;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      .tip-icon {
+        font-size: 18px;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>📖 使用方法</h2>
+      <ul class="steps">
+        <li class="step">
+          <div class="step-number">1</div>
+          <div class="step-text">复制HTML代码</div>
+        </li>
+        <li class="step">
+          <div class="step-number">2</div>
+          <div class="step-text">呼出uTools（确保主输入框里有HTML内容）</div>
+        </li>
+        <li class="step">
+          <div class="step-number">3</div>
+          <div class="step-text">选择Html预览插件</div>
+        </li>
+      </ul>
+
+      <div class="buttons-container">
+        <button class="button" onclick="parent.copyExampleHTML_BRIDGE()"><span class="button-icon">📋</span>复制示例HTML</button>
+      </div>
+
+      <div class="tip">
+        <span class="tip-icon">💡</span>
+        支持JavaScript执行和完整的HTML文档预览。
+      </div>
+    </div>
+  </body>
+</html>
+`
 
 // 一键复制示例HTML
 const copyExampleHTML = async () => {
   try {
-    await navigator.clipboard.writeText(exampleHTML);
-    window.utools.showNotification('示例HTML已复制到剪贴板!');
+    await navigator.clipboard.writeText(exampleHTML)
+    window.utools.showNotification('示例HTML已复制到剪贴板!')
   } catch (err) {
-    console.error('复制失败: ', err);
-    window.utools.showNotification('复制失败,请手动复制。');
+    console.error('复制失败: ', err)
+    window.utools.showNotification('复制失败,请手动复制。')
   }
-};
+}
 
 // 保存当前HTML为文件
 const saveAsHtmlFile = () => {
   // 获取当前预览的HTML内容
-  const content = htmlContent.value || '';
-  
+  const content = htmlContent.value || ''
+
   // 如果没有内容，提示后退出
   if (!content || content === 'Html预览' || content === 'html预览') {
-    window.utools.showNotification('没有HTML内容可保存!');
-    return;
+    window.utools.showNotification('没有HTML内容可保存!')
+    return
   }
 
   // 使用uTools API显示保存对话框
@@ -94,238 +267,73 @@ const saveAsHtmlFile = () => {
     title: '保存HTML文件',
     defaultPath: `${pageTitle.value || 'untitled'}.html`,
     filters: [{ name: 'HTML文件', extensions: ['html'] }]
-  });
+  })
 
   // 用户选择了保存位置
   if (filePath) {
     // 调用preload中暴露的方法来保存文件
-    const result = window.services.saveFile(filePath, content);
+    const result = window.services.saveFile(filePath, content)
     if (result && result.success) {
-      window.utools.showNotification(`文件已成功保存到: ${result.path}`);
+      window.utools.showNotification(`文件已成功保存到: ${result.path}`)
     } else {
-      console.error('保存文件失败:', result ? result.error : '未知错误');
-      window.utools.showNotification(`保存文件失败: ${result ? result.error : '未能成功保存文件'}`);
+      console.error('保存文件失败:', result ? result.error : '未知错误')
+      window.utools.showNotification(`保存文件失败: ${result ? result.error : '未能成功保存文件'}`)
     }
   }
-};
+}
 
 // 从iframe中获取title
-const updateTitle = () => {
-  if (!iframeRef.value) return
-  const doc = iframeRef.value.contentDocument || iframeRef.value.contentWindow.document
-  const title = doc.title
+const updateTitle = (content) => {
+  // 从html片段字符串中获取title
+  const title = content.match(/<title>(.*?)<\/title>/)[1]
   pageTitle.value = title || ''
+  // if (!iframeRef.value) return
+  // const doc = iframeRef.value.contentDocument || iframeRef.value.contentWindow.document
+  // const title = doc.title
+  // pageTitle.value = title || ''
 }
 
 // 更新iframe内容
 const updatePreview = (content) => {
   if (!iframeRef.value) return
-  
+
   const iframe = iframeRef.value
   const doc = iframe.contentDocument || iframe.contentWindow.document
-  
+
   // 如果没有内容,显示欢迎页面
   if (!content || content === 'Html预览' || content === 'Html预览') {
-    content = `
-      <style>
-        body {
-          margin: 0;
-          padding: 20px;
-          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-          background: linear-gradient(135deg, #f0f2f5, #e2e5ec);
-          color: #1d1d1f;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: calc(100vh - 40px);
-        }
-        .container {
-          max-width: 520px;
-          width: 100%;
-          margin: 0 auto;
-          background: rgba(255, 255, 255, 0.8);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border-radius: 20px;
-          padding: 25px 32px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-          text-align: center;
-        }
-        h2 {
-          margin: 0 0 32px;
-          color: #1d1d1f;
-          font-size: 28px;
-          font-weight: 600;
-          letter-spacing: -0.5px;
-        }
-        .steps {
-          list-style: none;
-          padding: 0;
-          margin: 0 0 8px 0;
-          text-align: left;
-        }
-        .step {
-          display: flex;
-          align-items: center;
-          padding: 5px 0;
-          margin-bottom: 8px;
-        }
-        .step:last-child {
-          margin-bottom: 0;
-        }
-        .step-number {
-          min-width: 32px;
-          height: 25px;
-          background: rgba(0, 122, 255, 0.1);
-          color: #007aff;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 500;
-          margin-right: 16px;
-          font-size: 15px;
-        }
-        .step-text {
-            font-size: 16px;
-            color: #1d1d1f;
-            line-height: 1.4;
-        }
-        .buttons-container {
-          display: flex;
-          gap: 12px;
-          justify-content: center;
-          margin-top: 24px;
-        }
-        .button {
-          padding: 10px 24px;
-          background: rgba(0, 122, 255, 0.9);
-          color: white;
-          border: none;
-          border-radius: 12px;
-          font-size: 15px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s ease-in-out;
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          display: flex;
-          align-items: center;
-        }
-        .button:hover {
-          background: rgba(0, 122, 255, 1);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
-        }
-        .button:active {
-          transform: translateY(0);
-          background: rgba(0, 122, 255, 0.8);
-          box-shadow: 0 2px 6px rgba(0, 122, 255, 0.2);
-        }
-        .button-icon {
-          margin-right: 8px;
-          font-size: 16px;
-        }
-        .tip {
-          margin-top: 20px;
-          padding: 10px;
-          background: rgba(0, 0, 0, 0.03);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          border-radius: 14px;
-          color: #1d1d1f;
-          font-size: 14px;
-          line-height: 1.5;
-          text-align: left;
-          border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        .tip-icon {
-          font-size: 18px;
-          margin-right: 8px;
-          vertical-align: middle;
-        }
-      </style>
-      <div class="container">
-        <h2>📖 使用方法</h2>
-        <ul class="steps">
-          <li class="step">
-            <div class="step-number">1</div>
-            <div class="step-text">复制HTML代码</div>
-          </li>
-          <li class="step">
-            <div class="step-number">2</div>
-            <div class="step-text">呼出uTools（确保主输入框里有HTML内容）</div>
-          </li>
-          <li class="step">
-            <div class="step-number">3</div>
-            <div class="step-text">选择Html预览插件</div>
-          </li>
-        </ul>
-        
-        <div class="buttons-container">
-          <button class="button" onclick="parent.copyExampleHTML_BRIDGE()">
-            <span class="button-icon">📋</span>复制示例HTML
-          </button>
-        </div>
-        
-        <div class="tip">
-          <span class="tip-icon">💡</span>
-          支持JavaScript执行和完整的HTML文档预览。
-        </div>
-      </div>
-    `
+    content = welcomeHTML
   }
-  
+
   // 写入完整的HTML文档结构
   doc.open()
-  doc.write(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style id="custom-scrollbar-style">
-          /* macOS Scrollbar Style */
-          ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-          }
-          ::-webkit-scrollbar-track {
-            background: transparent;
-          }
-          ::-webkit-scrollbar-thumb {
-            background: rgba(0,0,0,0.3);
-            border-radius: 4px;
-          }
-          ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0,0,0,0.5);
-          }
-          body { margin: 0; padding: 16px; }
-        </style>
-      </head>
-      <body>${content}</body>
-    </html>
-  `)
+  doc.write(content)
   doc.close()
-  
+
+  updateTitle(content)
+
   // 等待iframe加载完成后获取title
   iframe.onload = () => {
-    updateTitle()
+    // updateTitle()
     // 将函数桥接到iframe的父级
-    if(iframe.contentWindow) {
-      iframe.contentWindow.parent.copyExampleHTML_BRIDGE = copyExampleHTML;
-      iframe.contentWindow.parent.saveAsHtmlFile_BRIDGE = saveAsHtmlFile;
+    if (iframe.contentWindow) {
+      iframe.contentWindow.parent.copyExampleHTML_BRIDGE = copyExampleHTML
+      iframe.contentWindow.parent.saveAsHtmlFile_BRIDGE = saveAsHtmlFile
     }
   }
 }
 
 // 监听输入变化
-watch(() => props.enterAction, (newVal) => {
-  if (newVal.payload) {
-    htmlContent.value = newVal.payload
-    updatePreview(newVal.payload)
-  }
-}, { deep: true })
+watch(
+  () => props.enterAction,
+  (newVal) => {
+    if (newVal.payload) {
+      htmlContent.value = newVal.payload
+      updatePreview(newVal.payload)
+    }
+  },
+  { deep: true }
+)
 
 // 获取输入框内容
 onMounted(() => {
@@ -379,9 +387,9 @@ onMounted(() => {
         <div class="browser-actions">
           <span class="action-btn save" @click="saveAsHtmlFile" title="保存为HTML文件">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <polyline points="17 21 17 13 7 13 7 21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <polyline points="7 3 7 8 15 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <polyline points="17 21 17 13 7 13 7 21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <polyline points="7 3 7 8 15 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </span>
         </div>
@@ -478,6 +486,7 @@ onMounted(() => {
   color: #4a4a4a;
   font-weight: 500;
   margin: 0 auto;
+  padding-right: 68px;
 }
 
 .browser-toolbar {
