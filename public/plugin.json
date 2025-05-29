@@ -1,5 +1,4 @@
 {
-  "main": "index.html",
   "preload": "preload/services.js",
   "logo": "logo.png",
   "development": {
@@ -10,7 +9,7 @@
       "code": "preview",
       "explain": "预览HTML代码",
       "cmds": [
-        "Html预览",
+        "HTML预览",
         {
           "type": "regex",
           "label": "预览HTML",
@@ -18,7 +17,23 @@
           "minLength": 1,
           "maxLength": 999999
         }
-      ]
+      ],
+      "platform": ["darwin", "win32", "linux"]
+    },
+    {
+      "code": "savehtml",
+      "explain": "保存HTML到下载目录",
+      "cmds": [
+        "保存HTML",
+        {
+          "type": "regex",
+          "label": "保存HTML文件",
+          "match": "/<(?:\"[^\"]*\"['\"]*|'[^']*'['\"]*|[^'\">])+>/",
+          "minLength": 1,
+          "maxLength": 999999
+        }
+      ],
+      "platform": ["darwin", "win32", "linux"]
     }
   ]
 }
