@@ -1,3 +1,4 @@
+
 # 🌈 HTML Preview for uTools
 
 <div align="center">
@@ -7,8 +8,6 @@
 [![uTools](https://img.shields.io/badge/uTools-插件-green.svg)](https://u.tools/)
 
 一个优雅的HTML代码预览插件，提供类似浏览器的预览体验。
-
-<!-- <img src="docs/preview.png" alt="预览图" width="800"/> -->
 
 </div>
 
@@ -23,12 +22,8 @@
 <table>
   <tr>
     <td>🚀 即时预览</td>
-    <td>💻 模拟浏览器</td>
-    <td>🎨 优雅界面</td>
-  </tr>
-  <tr>
-    <td>⚡️ 支持JavaScript</td>
     <td>🔍 智能识别</td>
+    <td>🔄 双重预览模式</td>
     <td>💾 保存为文件</td>
   </tr>
 </table>
@@ -56,6 +51,30 @@
 1️⃣ 复制HTML文本  
 2️⃣ 呼出uTools（确保uTools主输入框里有HTML内容）
 3️⃣ 选择Html预览  
+
+### 双重预览模式
+
+本插件提供两种预览模式：
+
+- **内置预览**: 默认模式，直接在uTools内部预览HTML
+- **默认浏览器预览**: 通过系统默认浏览器打开预览
+
+  > **为什么需要两种预览模式？**
+  > 
+  > 当HTML代码中包含需要通过代理访问的资源（如图片、CSS、JavaScript等）时，内置浏览器无法设置代理，可能导致资源加载失败。而系统浏览器预览模式会使用系统已配置的代理设置，确保所有资源正常加载，提供完整的预览体验。
+
+### 预览原理说明
+
+本插件的预览功能基于以下工作原理：
+
+1. **临时文件创建**：当用户请求预览HTML内容时，插件会将HTML代码保存为临时文件
+2. **文件位置**：这些临时文件存储在系统的临时文件目录中（如Windows的`%TEMP%`目录）
+3. **浏览器打开**：然后通过内置浏览器或系统默认浏览器打开该临时文件
+4. **自动清理**：系统会根据其内置的临时文件管理机制自动清理这些文件，无需用户手动删除
+
+    > **无需担心临时文件堆积！** 
+    > 
+    > 由于使用系统标准的临时目录，操作系统会定期自动清理这些文件，不会造成垃圾文件积累或占用过多磁盘空间，用户可以放心使用预览功能。
 
 ### 使用场景
 
@@ -222,7 +241,7 @@
     <div class="confetti-container" id="confettiContainer"></div>
 
     <script>
-        const button = document.getElementById('actionButton');
+              const button = document.getElementById('actionButton');
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');
         const confettiContainer = document.getElementById('confettiContainer');
@@ -308,18 +327,26 @@
 ```
 </details>
 
-## 🛡️ 安全特性
+<details>
+<summary>非完整HTML代码示例</summary>
 
-- ✅ 沙箱环境执行JavaScript
-- ✅ 安全的资源访问控制
-- ✅ 隔离的执行环境
-
-<!-- ## 🔮 即将推出
-
-- [ ] 代码格式化功能
-- [ ] 多主题支持
-- [ ] 实时协作
-- [ ] 代码高亮 -->
+```html
+<div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;">
+  <div style="width: 300px; background: linear-gradient(135deg, #ff9a9e, #fad0c4); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+    <div style="padding: 20px; text-align: center; color: white; font-family: Arial, sans-serif;">
+      <h2 style="margin: 0; font-size: 24px;">欢迎使用Html预览插件!</h2>
+      <p style="margin: 10px 0 0; font-size: 16px;">鼠标悬停查看效果</p>
+    </div>
+  </div>
+</div>
+<style>
+  div div:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+  }
+</style>
+```
+</details>
 
 ## 🤝 贡献
 
@@ -329,7 +356,7 @@
 
 <div align="center">
   
-Made with ❤️ by 二进制跳杀
+Made with ❤️ by iblogc
 
 </div>
 

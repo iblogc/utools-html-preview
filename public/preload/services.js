@@ -142,7 +142,7 @@ const welcomeHTML = `<!DOCTYPE html>
 <body>
   <div class="container">
     <h1>HTML预览工具</h1>
-    <p>一个简单但功能强大的HTML预览插件，帮助您快速查看HTML代码的渲染效果</p>
+    <p>一个简单好用的HTML预览插件<br />帮助您快速查看HTML代码的渲染效果</p>
     
     <div class="divider"></div>
     
@@ -172,20 +172,10 @@ const welcomeHTML = `<!DOCTYPE html>
     </ul>
    </div>
 </body>
-</html>`;
+</html>`
 
 // 通过 window 对象向渲染进程注入 nodejs 能力
 window.services = {
-  saveFile(filePath, content) {
-    try {
-      fs.writeFileSync(filePath, content)
-      return { success: true, path: filePath }
-    } catch (error) {
-      console.error('Preload: 保存文件失败', error)
-      return { success: false, error: error.message }
-    }
-  },
-  
   // 创建临时HTML文件
   createTempHtmlFile(content) {
     try {
@@ -198,7 +188,7 @@ window.services = {
       return { success: false, error: error.message }
     }
   },
-  
+
   // 从HTML内容中提取标题
   extractTitleFromHtml(htmlContent) {
     try {
@@ -212,15 +202,14 @@ window.services = {
     }
     return 'untitled'
   },
-  
+
   // 保存HTML到下载目录
   saveHtmlToDownloads(content) {
     try {
       const title = this.extractTitleFromHtml(content)
       const downloadsDir = utools.getPath('downloads')
-      const filename = `${title}_${Date.now()}.html`
+      const filename = `${title}_${new Date().toISOString().slice(0, 19).replace(/[-T:]/g, '')}.html`
       const filePath = path.join(downloadsDir, filename)
-      
       fs.writeFileSync(filePath, content)
       return { success: true, path: filePath, title, filename }
     } catch (error) {
@@ -228,31 +217,79 @@ window.services = {
       return { success: false, error: error.message }
     }
   },
-  
-  // 获取欢迎页面HTML
-  getWelcomeHTML() {
-    return welcomeHTML;
+
+  // 处理HTML预览功能
+  handlePreviewHtml(htmlContent, type) {
+    // 根据功能类型执行不同操作
+    if (!htmlContent || htmlContent === 'html预览' || htmlContent === 'Html预览' || htmlContent === 'HTML预览') {
+      htmlContent = welcomeHTML
+    }
+    // 使用Node.js创建临时HTML文件
+    const result = this.createTempHtmlFile(htmlContent)
+    if (result.success) {
+      // 使用file://协议打开临时文件
+      const fileUrl = `file://${result.path}`
+      console.log('创建临时文件成功, 打开:', fileUrl)
+      if (type === 'preview1') {
+        utools.ubrowser.goto(fileUrl).run({ width: 1200, height: 800 })
+      } else {
+        utools.shellOpenExternal(fileUrl)
+        // utools.shellOpenPath(fileUrl)
+      }
+    } else {
+      console.error('创建临时文件失败:', result.error)
+      utools.showNotification('创建临时文件失败: ' + result.error)
+    }
+  },
+
+  // 处理保存HTML文件功能
+  handleSaveHtml(htmlContent) {
+    // 保存HTML到下载目录
+    const result = this.saveHtmlToDownloads(htmlContent)
+    if (result.success && result.path) {
+      console.log('保存HTML文件成功:', result.path)
+      utools.showNotification(`已保存HTML文件 "${result.filename}" 到下载目录`)
+
+      // 可选：在文件管理器中显示文件
+      utools.shellShowItemInFolder(result.path)
+    } else {
+      console.error('保存HTML文件失败:', result.error)
+      utools.showNotification('保存HTML文件失败: ' + (result.error || '未知错误'))
+    }
   }
 }
 
 // 导出给uTools调用的方法
 window.exports = {
-  'preview': {
-    mode: "none", // 无UI模式
+  preview1: {
+    mode: 'none', // 无UI模式
     args: {
       // 插件执行入口
       enter: (action) => {
-        utools.showNotification("hello world");
-        // 预览功能在App.vue中处理
-      },
-    },
+        window.services.handlePreviewHtml(action.payload, 'preview1')
+        utools.hideMainWindow()
+        utools.outPlugin()
+      }
+    }
   },
-  'savehtml': {
-    mode: "none",
+  preview2: {
+    mode: 'none', // 无UI模式
     args: {
-      enter: () => {
-        // 保存功能在App.vue中处理
-      },
-    },
+      enter: (action) => {
+        window.services.handlePreviewHtml(action.payload, 'preview2')
+        utools.hideMainWindow()
+        utools.outPlugin()
+      }
+    }
+  },
+  savehtml: {
+    mode: 'none',
+    args: {
+      enter: (action) => {
+        window.services.handleSaveHtml(action.payload)
+        utools.hideMainWindow()
+        utools.outPlugin()
+      }
+    }
   }
-};
+}
